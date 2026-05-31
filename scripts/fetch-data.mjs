@@ -53,7 +53,13 @@ try {
   if (deployKey) {
     keyDir = mkdtempSync(path.join(tmpdir(), "lanyard-key-"));
     const keyFile = path.join(keyDir, "id");
-    writeFileSync(keyFile, normalizeKey(deployKey), { mode: 0o600 });
+    const pem = normalizeKey(deployKey);
+    // Safe diagnostics (no key material): just sizes, shape, and the header.
+    console.log(
+      `[fetch-data] key: in=${deployKey.length} chars, hasPEM=${/-----BEGIN/.test(deployKey)}, ` +
+        `rebuilt=${pem.trim().split("\n").length} lines, head="${pem.slice(0, 31)}"`
+    );
+    writeFileSync(keyFile, pem, { mode: 0o600 });
     env.GIT_SSH_COMMAND = `ssh -i "${keyFile}" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new`;
   }
   // stdout suppressed so a tokenised URL can't surface in build logs.
