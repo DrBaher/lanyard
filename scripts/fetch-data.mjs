@@ -23,6 +23,23 @@ const url = process.env.DATA_REPO_URL;
 const branch = process.env.DATA_REPO_BRANCH || "main";
 const deployKey = process.env.DATA_REPO_DEPLOY_KEY;
 
+// Rebuild a valid PEM private key from however the env stored it: raw PEM (even
+// with the newlines collapsed to spaces by a dashboard's env UI) or base64 of
+// the whole key file. OpenSSH rejects CRLF, lost line wrapping, or a missing
+// trailing newline with "error in libcrypto", so reconstruct it cleanly.
+function normalizeKey(input) {
+  const s = input.trim();
+  const m = s.match(/-----BEGIN ([A-Z0-9 ]+)-----([\s\S]*?)-----END \1-----/);
+  if (m) {
+    const label = m[1].trim();
+    const body = m[2].replace(/\s+/g, "");
+    const wrapped = (body.match(/.{1,70}/g) || []).join("\n");
+    return `-----BEGIN ${label}-----\n${wrapped}\n-----END ${label}-----\n`;
+  }
+  // No PEM markers → assume base64 of the whole key file.
+  return Buffer.from(s.replace(/\s+/g, ""), "base64").toString("utf8").replace(/\r\n?/g, "\n").trimEnd() + "\n";
+}
+
 if (!url) {
   console.log("[fetch-data] DATA_REPO_URL not set — using the committed data/.");
   process.exit(0);
@@ -34,16 +51,9 @@ const env = { ...process.env };
 
 try {
   if (deployKey) {
-    // Write the read-only deploy key and point git's SSH at it. Accept either
-    // the raw PEM (recommended — paste it as a multiline Vercel value) or a
-    // base64 blob, and normalise line endings: OpenSSH rejects CRLF or a
-    // missing trailing newline with "error in libcrypto".
     keyDir = mkdtempSync(path.join(tmpdir(), "lanyard-key-"));
     const keyFile = path.join(keyDir, "id");
-    const isPem = /-----BEGIN [^-]*PRIVATE KEY-----/.test(deployKey);
-    let pem = isPem ? deployKey : Buffer.from(deployKey.replace(/\s+/g, ""), "base64").toString("utf8");
-    pem = pem.replace(/\r\n?/g, "\n").trimEnd() + "\n";
-    writeFileSync(keyFile, pem, { mode: 0o600 });
+    writeFileSync(keyFile, normalizeKey(deployKey), { mode: 0o600 });
     env.GIT_SSH_COMMAND = `ssh -i "${keyFile}" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new`;
   }
   // stdout suppressed so a tokenised URL can't surface in build logs.
