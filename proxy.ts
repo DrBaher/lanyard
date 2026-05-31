@@ -12,8 +12,10 @@ import { event } from "@/event.config";
  * and are never shipped to the browser bundle.
  *
  * Fails closed: if APP_ACCESS_PASSWORD is not set, the app stays locked rather
- * than silently going public.
+ * than silently going public — UNLESS APP_ALLOW_PUBLIC is explicitly set
+ * (e.g. for a public demo deployment), which disables the gate entirely.
  */
+const ALLOW_PUBLIC = /^(1|true|yes)$/i.test(process.env.APP_ALLOW_PUBLIC || "");
 const USER = process.env.APP_ACCESS_USER || "guest";
 const PASSWORD = process.env.APP_ACCESS_PASSWORD || "";
 const REALM = `${event.shortName} Companion`;
@@ -29,6 +31,8 @@ function challenge(message: string, status = 401) {
 }
 
 export function proxy(req: NextRequest) {
+  // Explicitly-opened deployment (e.g. the public demo): no gate.
+  if (ALLOW_PUBLIC) return NextResponse.next();
   if (!PASSWORD) {
     // Misconfiguration guard — never serve the app wide open by accident.
     return challenge("Access gate not configured. Set APP_ACCESS_PASSWORD.", 503);

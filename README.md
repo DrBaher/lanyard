@@ -137,6 +137,9 @@ vars and custom domains easy. It's the path of least resistance here.
 > returns HTTP 503. If you see that after deploy, you haven't set it (or need to
 > redeploy after adding it).
 
+For a **public demo** (no login), set `APP_ALLOW_PUBLIC=true` instead of a
+password — that explicitly disables the gate for that deployment only.
+
 For a CLI alternative and an on-phone test checklist, see **[DEPLOY.md](./DEPLOY.md)**.
 
 ### Other hosts that work

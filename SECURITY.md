@@ -22,7 +22,9 @@ pull the latest `main` to pick them up.
   the edge before any page, bundle, or data is served. It **fails closed**: with
   no `APP_ACCESS_PASSWORD` set, every request returns HTTP 503. A client-side
   check would *not* be enough — the gate must run server-side, which is why this
-  app can't be deployed as a static export.
+  app can't be deployed as a static export. (The only way to disable the gate is
+  to explicitly set `APP_ALLOW_PUBLIC=true` — intended for public demo
+  deployments; never set it on one carrying real data.)
 - **Keep secrets out of the repo.** `APP_ACCESS_PASSWORD`, `ANTHROPIC_API_KEY`,
   etc. belong in your host's environment (and `.env.local`, which is
   git-ignored). Never commit them. The access password is shipped to nobody —
