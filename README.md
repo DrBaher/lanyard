@@ -16,6 +16,8 @@ tier.
 
 **▶ [Live demo](https://lanyard-demo.vercel.app)** — sample data, no login required.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/DrBaher/lanyard&env=APP_ACCESS_USER,APP_ACCESS_PASSWORD&envDescription=Login%20for%20the%20access%20gate%20-%20the%20app%20stays%20locked%20until%20the%20password%20is%20set&envLink=https://github.com/DrBaher/lanyard%23deploying&project-name=lanyard&repository-name=lanyard)
+
 <table>
   <tr>
     <td><img src="docs/screenshots/agenda-light.png" alt="Time-aware agenda" width="260"></td>
