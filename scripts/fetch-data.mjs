@@ -34,10 +34,15 @@ const env = { ...process.env };
 
 try {
   if (deployKey) {
-    // Write the read-only deploy key and point git's SSH at it.
+    // Write the read-only deploy key and point git's SSH at it. Accept either
+    // the raw PEM (recommended — paste it as a multiline Vercel value) or a
+    // base64 blob, and normalise line endings: OpenSSH rejects CRLF or a
+    // missing trailing newline with "error in libcrypto".
     keyDir = mkdtempSync(path.join(tmpdir(), "lanyard-key-"));
     const keyFile = path.join(keyDir, "id");
-    const pem = Buffer.from(deployKey, "base64").toString("utf8").trimEnd() + "\n";
+    const isPem = /-----BEGIN [^-]*PRIVATE KEY-----/.test(deployKey);
+    let pem = isPem ? deployKey : Buffer.from(deployKey.replace(/\s+/g, ""), "base64").toString("utf8");
+    pem = pem.replace(/\r\n?/g, "\n").trimEnd() + "\n";
     writeFileSync(keyFile, pem, { mode: 0o600 });
     env.GIT_SSH_COMMAND = `ssh -i "${keyFile}" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new`;
   }

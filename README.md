@@ -163,7 +163,8 @@ build combines them only in your deployment:
 2. In your deploy environment (e.g. Vercel), set `DATA_REPO_URL` plus one auth:
    - **Deploy key (recommended):** add a read-only deploy key to the data repo,
      set `DATA_REPO_URL=git@github.com:you/your-data.git` and
-     `DATA_REPO_DEPLOY_KEY` to that key's base64-encoded private key.
+     `DATA_REPO_DEPLOY_KEY` to that key's private key — paste the raw PEM as a
+     multiline value (or base64).
    - **Token:** `DATA_REPO_URL=https://x-access-token:<TOKEN>@github.com/you/your-data.git`
    - `DATA_REPO_BRANCH` — optional, defaults to `main`
 3. `npm run build` runs `scripts/fetch-data.mjs`, which overlays those files
