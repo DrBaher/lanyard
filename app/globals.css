@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Dark is the default theme; .light overrides the same tokens. The no-flash
+   script in layout.tsx adds .light or .dark to <html> before first paint.
+   Variables are "R G B" triplets so Tailwind's /alpha modifiers keep working. */
+:root,
+.dark {
+  color-scheme: dark;
+  --page: 11 16 32;
+  --ink: 11 16 32;
+  --panel: 18 26 46;
+  --edge: 35 48 77;
+  --fg: 248 250 252;
+  --body: 203 213 225;
+  --muted: 148 163 184;
+  --brand: 59 130 246;
+  --live: 34 197 94;
+  --warn: 251 191 36;
+  --danger: 248 113 113;
+  --star: 250 204 21;
+}
+
+.light {
+  color-scheme: light;
+  --page: 241 245 249;
+  --ink: 255 255 255;
+  --panel: 255 255 255;
+  --edge: 226 232 240;
+  --fg: 15 23 42;
+  --body: 51 65 85;
+  --muted: 100 116 139;
+  --brand: 37 99 235;
+  --live: 22 163 74;
+  --warn: 217 119 6;
+  --danger: 220 38 38;
+  --star: 202 138 4;
+}
+
+html,
+body {
+  background: rgb(var(--page));
+  color: rgb(var(--body));
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  /* Leave room for the fixed bottom nav on mobile. */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@layer components {
+  /* Interactive surfaces share a keyboard focus ring (focus-visible only, so it
+     stays invisible for mouse/touch). */
+  .card {
+    @apply rounded-2xl border border-edge bg-panel p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-page;
+  }
+  /* Layer onto a .card that is itself a link/button to signal it's tappable. */
+  .card-link {
+    @apply transition-colors hover:border-brand/60;
+  }
+  .chip {
+    @apply inline-flex items-center rounded-full border border-edge bg-ink px-2.5 py-1 text-xs text-body transition-colors hover:border-brand/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-page;
+  }
+  .btn {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-edge bg-ink px-3 py-2 text-sm font-medium text-fg transition active:scale-95 hover:border-brand/60 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-page;
+  }
+  .btn-brand {
+    @apply border-transparent bg-brand-strong text-white;
+  }
+  /* 16px text (text-base) is deliberate: iOS Safari auto-zooms when a focused
+     input is under 16px, which then leaves the page zoomed in. */
+  .input {
+    @apply min-h-[44px] w-full rounded-xl border border-edge bg-ink px-3 py-2 text-base text-fg placeholder:text-muted outline-none focus:border-brand;
+  }
+  .section-title {
+    @apply text-lg font-semibold text-fg;
+  }
+  .muted {
+    @apply text-sm text-muted;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Subtle live pulse for the "happening now" indicator. */
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.live-dot {
+  animation: pulse-live 1.6s ease-in-out infinite;
+}
+
+/* Respect users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .live-dot {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

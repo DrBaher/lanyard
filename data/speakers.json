@@ -1,0 +1,47 @@
+[
+  {
+    "id": "spk-ada-lovelace",
+    "name": "Ada Lovelace",
+    "title": "Chief Scientist",
+    "company": "Analytical Engines",
+    "orgId": "org-analytical-engines",
+    "topics": ["AI", "Research"],
+    "bio": "Sample speaker. Replace data/speakers.json with your own program's speakers (see README)."
+  },
+  {
+    "id": "spk-grace-hopper",
+    "name": "Grace Hopper",
+    "title": "VP Engineering",
+    "company": "Compiler Corp",
+    "orgId": "org-compiler-corp",
+    "topics": ["Software"],
+    "bio": "Sample speaker."
+  },
+  {
+    "id": "spk-alan-turing",
+    "name": "Alan Turing",
+    "title": "Founder",
+    "company": "Turing Labs",
+    "orgId": "org-turing-labs",
+    "topics": ["AI", "Security"],
+    "bio": "Sample speaker."
+  },
+  {
+    "id": "spk-radia-perlman",
+    "name": "Radia Perlman",
+    "title": "Principal Architect",
+    "company": "Spanning Tree Inc",
+    "orgId": "org-spanning-tree",
+    "topics": ["Infrastructure"],
+    "bio": "Sample speaker."
+  },
+  {
+    "id": "spk-katherine-johnson",
+    "name": "Katherine Johnson",
+    "title": "Lead Analyst",
+    "company": "Orbital Dynamics",
+    "orgId": "org-orbital-dynamics",
+    "topics": ["Data"],
+    "bio": "Sample speaker."
+  }
+]

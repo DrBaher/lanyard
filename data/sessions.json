@@ -1,0 +1,85 @@
+[
+  {
+    "id": "ses-1",
+    "title": "Opening Keynote: The Next Decade of Computing",
+    "start": "2026-06-01T09:00:00+02:00",
+    "end": "2026-06-01T09:45:00+02:00",
+    "stage": "Main Stage",
+    "track": "Keynote",
+    "tags": ["Keynote", "AI"],
+    "speakerIds": ["spk-ada-lovelace"],
+    "orgIds": ["org-analytical-engines"],
+    "description": "Sample session. This is where the session abstract appears in the detail popup. Replace data/sessions.json with your own program (see README).",
+    "sourceUrl": "https://example.com/sessions/opening-keynote"
+  },
+  {
+    "id": "ses-2",
+    "title": "Panel: Building Reliable Software at Scale",
+    "start": "2026-06-01T10:00:00+02:00",
+    "end": "2026-06-01T10:45:00+02:00",
+    "stage": "Main Stage",
+    "track": "Software",
+    "tags": ["Software", "Panel"],
+    "speakerIds": ["spk-grace-hopper", "spk-alan-turing"],
+    "orgIds": ["org-compiler-corp", "org-turing-labs"],
+    "description": "Sample panel session with multiple speakers."
+  },
+  {
+    "id": "ses-3",
+    "title": "Workshop: Designing Resilient Networks",
+    "start": "2026-06-01T11:00:00+02:00",
+    "end": "2026-06-01T12:00:00+02:00",
+    "stage": "Workshop Room",
+    "track": "Infrastructure",
+    "tags": ["Infrastructure", "Workshop"],
+    "speakerIds": ["spk-radia-perlman"],
+    "orgIds": ["org-spanning-tree"],
+    "description": "Sample hands-on workshop session."
+  },
+  {
+    "id": "ses-4",
+    "title": "Lunch & Networking",
+    "start": "2026-06-01T12:30:00+02:00",
+    "end": "2026-06-01T14:00:00+02:00",
+    "stage": "Networking Lounge",
+    "track": "Networking",
+    "tags": ["Networking"],
+    "description": "Sample break/networking slot with no speakers."
+  },
+  {
+    "id": "ses-5",
+    "title": "Keynote: Data-Driven Decisions",
+    "start": "2026-06-02T09:30:00+02:00",
+    "end": "2026-06-02T10:15:00+02:00",
+    "stage": "Main Stage",
+    "track": "Keynote",
+    "tags": ["Keynote", "Data"],
+    "speakerIds": ["spk-katherine-johnson"],
+    "orgIds": ["org-orbital-dynamics"],
+    "description": "Sample day-two keynote."
+  },
+  {
+    "id": "ses-6",
+    "title": "Fireside Chat: Security in an AI World",
+    "start": "2026-06-02T10:30:00+02:00",
+    "end": "2026-06-02T11:15:00+02:00",
+    "stage": "Main Stage",
+    "track": "Security",
+    "tags": ["Security", "AI"],
+    "speakerIds": ["spk-alan-turing"],
+    "orgIds": ["org-turing-labs"],
+    "description": "Sample fireside chat."
+  },
+  {
+    "id": "ses-7",
+    "title": "Workshop: From Prototype to Production",
+    "start": "2026-06-02T11:30:00+02:00",
+    "end": "2026-06-02T12:15:00+02:00",
+    "stage": "Workshop Room",
+    "track": "Software",
+    "tags": ["Software", "Workshop"],
+    "speakerIds": ["spk-grace-hopper"],
+    "orgIds": ["org-compiler-corp"],
+    "description": "Sample closing workshop."
+  }
+]

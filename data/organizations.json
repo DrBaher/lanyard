@@ -1,0 +1,42 @@
+[
+  {
+    "id": "org-analytical-engines",
+    "name": "Analytical Engines",
+    "type": "company",
+    "tagline": "Computing from first principles",
+    "description": "Sample organization. Replace data/organizations.json with your own (see README).",
+    "website": "https://example.com",
+    "booth": "A1",
+    "topics": ["AI", "Research"]
+  },
+  {
+    "id": "org-compiler-corp",
+    "name": "Compiler Corp",
+    "type": "company",
+    "tagline": "Languages and developer tooling",
+    "website": "https://example.com",
+    "booth": "B2",
+    "topics": ["Software"]
+  },
+  {
+    "id": "org-turing-labs",
+    "name": "Turing Labs",
+    "type": "partner",
+    "tagline": "Foundational research",
+    "website": "https://example.com"
+  },
+  {
+    "id": "org-spanning-tree",
+    "name": "Spanning Tree Inc",
+    "type": "sponsor",
+    "tagline": "Networks that scale"
+  },
+  {
+    "id": "org-orbital-dynamics",
+    "name": "Orbital Dynamics",
+    "type": "company",
+    "tagline": "Data for the space economy",
+    "website": "https://example.com",
+    "topics": ["Data"]
+  }
+]
