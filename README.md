@@ -14,6 +14,8 @@ tier.
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![PWA](https://img.shields.io/badge/PWA-installable-5a0fc8)
 
+**▶ [Live demo](https://lanyard-demo.vercel.app)** — sample data, no login required.
+
 <table>
   <tr>
     <td><img src="docs/screenshots/agenda-light.png" alt="Time-aware agenda" width="260"></td>
