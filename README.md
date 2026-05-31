@@ -160,9 +160,11 @@ build combines them only in your deployment:
 
 1. Create a private repo containing your real `data/*.json` (at its root or
    under `data/`).
-2. In your deploy environment (e.g. Vercel), set:
-   - `DATA_REPO_URL` — a clone URL with a **read-only** token, e.g.
-     `https://x-access-token:<TOKEN>@github.com/you/your-data.git`
+2. In your deploy environment (e.g. Vercel), set `DATA_REPO_URL` plus one auth:
+   - **Deploy key (recommended):** add a read-only deploy key to the data repo,
+     set `DATA_REPO_URL=git@github.com:you/your-data.git` and
+     `DATA_REPO_DEPLOY_KEY` to that key's base64-encoded private key.
+   - **Token:** `DATA_REPO_URL=https://x-access-token:<TOKEN>@github.com/you/your-data.git`
    - `DATA_REPO_BRANCH` — optional, defaults to `main`
 3. `npm run build` runs `scripts/fetch-data.mjs`, which overlays those files
    over the committed sample data before `next build`. With `DATA_REPO_URL`
