@@ -19,8 +19,8 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const url = process.env.DATA_REPO_URL;
-const branch = process.env.DATA_REPO_BRANCH || "main";
+const url = (process.env.DATA_REPO_URL || "").trim();
+const branch = (process.env.DATA_REPO_BRANCH || "main").trim();
 const deployKey = process.env.DATA_REPO_DEPLOY_KEY;
 
 // Rebuild a valid PEM private key from however the env stored it: raw PEM (even
@@ -54,11 +54,14 @@ try {
     keyDir = mkdtempSync(path.join(tmpdir(), "lanyard-key-"));
     const keyFile = path.join(keyDir, "id");
     const pem = normalizeKey(deployKey);
-    // Safe diagnostics (no key material): just sizes, shape, and the header.
-    console.log(
-      `[fetch-data] key: in=${deployKey.length} chars, hasPEM=${/-----BEGIN/.test(deployKey)}, ` +
-        `rebuilt=${pem.trim().split("\n").length} lines, head="${pem.slice(0, 31)}"`
-    );
+    if (!/PRIVATE KEY/.test(pem)) {
+      console.error(
+        "[fetch-data] DATA_REPO_DEPLOY_KEY is not a private key — it looks like a " +
+          "PUBLIC key or is truncated. Paste the full PRIVATE key: the block from " +
+          "'-----BEGIN OPENSSH PRIVATE KEY-----' to '-----END OPENSSH PRIVATE KEY-----'."
+      );
+      process.exit(1);
+    }
     writeFileSync(keyFile, pem, { mode: 0o600 });
     env.GIT_SSH_COMMAND = `ssh -i "${keyFile}" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new`;
   }
