@@ -10,6 +10,33 @@ the device.
 Built with Next.js 16, React 19, and Tailwind. Designed to run on Vercel's free
 tier.
 
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![PWA](https://img.shields.io/badge/PWA-installable-5a0fc8)
+
+<table>
+  <tr>
+    <td><img src="docs/screenshots/agenda-light.png" alt="Time-aware agenda" width="260"></td>
+    <td><img src="docs/screenshots/session-dark.png" alt="Session detail popup (dark)" width="260"></td>
+    <td><img src="docs/screenshots/meet-light.png" alt="On-device contacts (Meet)" width="260"></td>
+  </tr>
+</table>
+
+<sub>Shown with the bundled sample data; light & dark themes included.</sub>
+
+## Contents
+
+- [Features](#features)
+- [Quick start](#quick-start)
+- [Deploying](#deploying)
+- [Importing program data](#importing-program-data)
+- [Optional: AI research](#optional-ai-research)
+- [Customising branding](#customising-branding)
+- [Your data, your responsibility](#your-data-your-responsibility)
+- [Contributing](#contributing)
+- [Security](#security)
+- [License](#license)
+
 ## Features
 
 - **Now** — what's live and up next, computed from the current time.
@@ -206,6 +233,19 @@ npm test            # unit tests (vitest)
 npm run e2e         # end-to-end tests (playwright)
 ```
 
+## Contributing
+
+Contributions are welcome — bug fixes, new importers (Sessionize, CSV…), and
+docs especially. See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup and the PR
+flow, and please follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
+
+## Security
+
+The app's privacy depends on the access gate and your secrets. Please report
+vulnerabilities privately — see [SECURITY.md](./SECURITY.md). Never commit
+`.env.local`, and keep `APP_ACCESS_PASSWORD` out of the repo.
+
 ## License
 
-[MIT](./LICENSE) — code only.
+[MIT](./LICENSE) — code only. See
+[Your data, your responsibility](#your-data-your-responsibility) for the data.
