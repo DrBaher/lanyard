@@ -54,6 +54,10 @@ try {
     keyDir = mkdtempSync(path.join(tmpdir(), "lanyard-key-"));
     const keyFile = path.join(keyDir, "id");
     const pem = normalizeKey(deployKey);
+    console.log(
+      `[fetch-data] key: in=${deployKey.length} chars, hasPEM=${/-----BEGIN/.test(deployKey)}, ` +
+        `rebuilt=${pem.trim().split("\n").length} lines, head="${pem.slice(0, 31)}"`
+    );
     if (!/PRIVATE KEY/.test(pem)) {
       console.error(
         "[fetch-data] DATA_REPO_DEPLOY_KEY is not a private key — it looks like a " +
