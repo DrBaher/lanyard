@@ -10,7 +10,10 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "coverage": "vitest run --coverage",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "import:ics": "node scripts/import/ics.mjs",
+    "import:frab": "node scripts/import/frab.mjs",
+    "import:any": "node scripts/import/generic.mjs"
   },
   "engines": {
     "node": ">=20.9.0"

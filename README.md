@@ -82,6 +82,42 @@ Push to a Git host and import the project on [Vercel](https://vercel.com). Add
 below) as Environment Variables, then deploy. The app is gated server-side and
 marked `noindex`, so it won't be crawled.
 
+## Importing program data
+
+Writing `data/*.json` by hand is fine, but if your event publishes a schedule
+in a standard format you can convert it:
+
+```bash
+# iCalendar (.ics) feed → data/sessions.json
+npm run import:ics -- https://example.com/schedule.ics
+
+# Pretalx / frab "schedule.json" → data/sessions.json + data/speakers.json
+npm run import:frab -- https://example.com/schedule.json
+```
+
+Both accept a local path or URL, write straight into `data/`, and print a
+suggested `days` list for `event.config.ts`. Pass `--out <dir>` to write
+elsewhere (e.g. to review before overwriting).
+
+There's no universal *scraper* — every site's HTML differs — so for anything
+that isn't a standard feed, the LLM-assisted importer maps an arbitrary source
+(a saved HTML page, a JSON dump, CSV, even pasted text) onto the data model:
+
+```bash
+# Needs ANTHROPIC_API_KEY. Review the output before trusting it.
+npm run import:any -- ./my-schedule.html --tz Europe/Berlin
+```
+
+And `--enrich` on the standard importers uses Claude to fill in topic tags when
+the source has none:
+
+```bash
+npm run import:ics -- schedule.ics --enrich
+```
+
+> Only import data you have the right to use — see "Your data, your
+> responsibility" below. The importers are a convenience, not a license.
+
 ## Optional: AI research
 
 Add `ANTHROPIC_API_KEY` to enable the "Research" buttons (Claude + web search,
