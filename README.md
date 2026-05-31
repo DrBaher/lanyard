@@ -152,6 +152,27 @@ Anything that runs a Next.js Node/edge server, since middleware must run:
 Whatever you choose, set the env vars there and confirm the login prompt appears
 before sharing the URL.
 
+### Private data, public code (optional)
+
+Want to open-source the code but keep your real program data private? Keep the
+code in this repo and your `data/*.json` in a **separate private repo**; the
+build combines them only in your deployment:
+
+1. Create a private repo containing your real `data/*.json` (at its root or
+   under `data/`).
+2. In your deploy environment (e.g. Vercel), set:
+   - `DATA_REPO_URL` — a clone URL with a **read-only** token, e.g.
+     `https://x-access-token:<TOKEN>@github.com/you/your-data.git`
+   - `DATA_REPO_BRANCH` — optional, defaults to `main`
+3. `npm run build` runs `scripts/fetch-data.mjs`, which overlays those files
+   over the committed sample data before `next build`. With `DATA_REPO_URL`
+   unset, the committed `data/` is used as-is — so the public repo and other
+   deployers are unaffected.
+
+For local dev against your real data: `DATA_REPO_URL=… npm run fetch-data` then
+`npm run dev`. Don't commit the overlaid `data/` back into the public repo. Use
+a fine-grained token scoped read-only to the data repo.
+
 ## Importing program data
 
 Writing `data/*.json` by hand is fine, but if your event publishes a schedule
