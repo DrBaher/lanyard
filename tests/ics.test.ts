@@ -29,7 +29,7 @@ describe("sessionsToIcs", () => {
   it("carries summary, location and a stable UID", () => {
     expect(ics).toContain("SUMMARY:Opening Keynote: Europe's Tech Moment");
     expect(ics).toContain("LOCATION:Main Stage");
-    expect(ics).toContain("UID:ses-d1-opening@event-companion");
+    expect(ics).toContain("UID:ses-d1-opening@lanyard");
   });
 
   it("adds a VALARM at the requested lead time", () => {

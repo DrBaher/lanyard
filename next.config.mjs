@@ -2,7 +2,7 @@
 //  - script: inline (Next bootstrap) + wasm (Tesseract OCR runs WebAssembly)
 //  - worker blob: (Tesseract + service worker spin up blob workers)
 //  - img https/data/blob: (remote logos, generated QR canvases, initial avatars)
-//  - connect https/wss: (Supabase magic-link + realtime, same-origin /api)
+//  - connect https/wss: (same-origin /api and any remote data you reference)
 // Camera (QR/OCR) is granted via Permissions-Policy, not CSP.
 const csp = [
   "default-src 'self'",

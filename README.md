@@ -1,7 +1,7 @@
-# Event Companion
+# Lanyard
 
-A private, installable (PWA) companion app for a conference or event. Point it
-at your own program data and deploy it behind a password in minutes.
+A private, installable **event companion** (PWA) for a conference or event.
+Point it at your own program data and deploy it behind a password in minutes.
 
 It's time-aware (a "happening now / up next" view), works offline, and stores
 everything personal — your starred sessions, the people you meet — locally on
@@ -136,6 +136,8 @@ vars and custom domains easy. It's the path of least resistance here.
 > The gate **fails closed**: until `APP_ACCESS_PASSWORD` is set, every request
 > returns HTTP 503. If you see that after deploy, you haven't set it (or need to
 > redeploy after adding it).
+
+For a CLI alternative and an on-phone test checklist, see **[DEPLOY.md](./DEPLOY.md)**.
 
 ### Other hosts that work
 

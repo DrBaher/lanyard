@@ -14,7 +14,7 @@ export default defineConfig({
       // Focus on the pure logic we actually unit-test; UI/providers are
       // exercised by the Playwright E2E layer instead.
       include: ["lib/**/*.ts"],
-      exclude: ["lib/data.ts", "lib/supabase.ts", "lib/storage.ts"],
+      exclude: ["lib/data.ts", "lib/storage.ts"],
     },
   },
 });

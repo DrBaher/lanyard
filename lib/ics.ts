@@ -43,7 +43,7 @@ function vevent(s: Session, alarmMinutes: number): string[] {
     .join("\n");
   const lines = [
     "BEGIN:VEVENT",
-    `UID:${s.id}@event-companion`,
+    `UID:${s.id}@lanyard`,
     `DTSTAMP:${icsDate(new Date(s.start))}`,
     `DTSTART:${icsDate(new Date(s.start))}`,
     `DTEND:${icsDate(new Date(s.end))}`,
