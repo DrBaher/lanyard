@@ -23,5 +23,8 @@ export default defineConfig({
     url: "http://localhost:3100",
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
+    // Run the test server in public mode so the access gate (proxy.ts), which
+    // otherwise fails closed with a 503, doesn't block the E2E run.
+    env: { APP_ALLOW_PUBLIC: "true" },
   },
 });
