@@ -27,17 +27,28 @@ const deployKey = process.env.DATA_REPO_DEPLOY_KEY;
 // with the newlines collapsed to spaces by a dashboard's env UI) or base64 of
 // the whole key file. OpenSSH rejects CRLF, lost line wrapping, or a missing
 // trailing newline with "error in libcrypto", so reconstruct it cleanly.
+function wrapPem(label, body) {
+  const wrapped = (body.replace(/\s+/g, "").match(/.{1,70}/g) || []).join("\n");
+  return `-----BEGIN ${label}-----\n${wrapped}\n-----END ${label}-----\n`;
+}
+
 function normalizeKey(input) {
   const s = input.trim();
+  // 1) Full PEM (even with newlines collapsed to spaces): re-wrap the body.
   const m = s.match(/-----BEGIN ([A-Z0-9 ]+)-----([\s\S]*?)-----END \1-----/);
-  if (m) {
-    const label = m[1].trim();
-    const body = m[2].replace(/\s+/g, "");
-    const wrapped = (body.match(/.{1,70}/g) || []).join("\n");
-    return `-----BEGIN ${label}-----\n${wrapped}\n-----END ${label}-----\n`;
+  if (m) return wrapPem(m[1].trim(), m[2]);
+
+  const b64 = s.replace(/\s+/g, "");
+  // 2) base64 of the whole key file → decodes to PEM text; rebuild it.
+  const asText = Buffer.from(b64, "base64").toString("utf8");
+  if (/-----BEGIN [A-Z0-9 ]+-----/.test(asText)) return normalizeKey(asText);
+  // 3) Just the base64 BODY of an OpenSSH private key (header lines dropped):
+  //    its decoded bytes start with the "openssh-key-v1" magic — re-add armor.
+  if (Buffer.from(b64, "base64").subarray(0, 14).toString("latin1") === "openssh-key-v1") {
+    return wrapPem("OPENSSH PRIVATE KEY", b64);
   }
-  // No PEM markers → assume base64 of the whole key file.
-  return Buffer.from(s.replace(/\s+/g, ""), "base64").toString("utf8").replace(/\r\n?/g, "\n").trimEnd() + "\n";
+  // Otherwise return the decoded text; the caller's guard reports it clearly.
+  return asText.replace(/\r\n?/g, "\n").trimEnd() + "\n";
 }
 
 if (!url) {
