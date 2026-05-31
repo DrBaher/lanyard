@@ -77,10 +77,51 @@ production. Share the user + password with whoever you want to let in.
 
 ### 4. Deploy
 
-Push to a Git host and import the project on [Vercel](https://vercel.com). Add
-`APP_ACCESS_USER` / `APP_ACCESS_PASSWORD` (and optionally the research keys
-below) as Environment Variables, then deploy. The app is gated server-side and
-marked `noindex`, so it won't be crawled.
+See **[Deploying](#deploying)** below.
+
+## Deploying
+
+**This app needs a host that runs Next.js server-side** — it isn't a static
+site. The access gate (`proxy.ts`) runs as Next middleware, and the optional
+research endpoint is a server route. So **static-only hosts won't work**
+(GitHub Pages, plain S3/CDN, `next export`): the gate wouldn't run and the data
+would be served unprotected.
+
+You also want **HTTPS** in production — the camera (badge QR/OCR scanning) and
+PWA install/service worker only work over HTTPS (or `localhost` in dev).
+
+### Recommended: Vercel
+
+Vercel is made by the Next.js team, runs the middleware/proxy and API routes
+with zero config, gives automatic HTTPS and a generous free tier, and makes env
+vars and custom domains easy. It's the path of least resistance here.
+
+1. Push this repo to GitHub/GitLab/Bitbucket.
+2. On [vercel.com](https://vercel.com) → **Add New → Project** → import the repo
+   (framework auto-detects as Next.js).
+3. **Settings → Environment Variables**, add:
+   - `APP_ACCESS_USER` (e.g. `guest`)
+   - `APP_ACCESS_PASSWORD` (your secret) — **required**
+   - optionally `ANTHROPIC_API_KEY`, `RESEARCH_MODEL`, `NEXT_PUBLIC_GROUP_CODE`
+4. **Deploy.** Open the URL — your browser prompts for the user/password.
+5. (Optional) add a custom domain under **Settings → Domains**.
+
+> The gate **fails closed**: until `APP_ACCESS_PASSWORD` is set, every request
+> returns HTTP 503. If you see that after deploy, you haven't set it (or need to
+> redeploy after adding it).
+
+### Other hosts that work
+
+Anything that runs a Next.js Node/edge server, since middleware must run:
+
+- **Netlify** (with the Next.js runtime), **Render**, **Railway**, **Fly.io**,
+  **Cloudflare** (Next-on-Pages) — import the repo, set the same env vars.
+- **Self-host / Docker / a VPS:** `npm run build && npm run start`, then put it
+  behind a reverse proxy (Caddy/Nginx) that terminates HTTPS. `next start` runs
+  the proxy gate just like Vercel does.
+
+Whatever you choose, set the env vars there and confirm the login prompt appears
+before sharing the URL.
 
 ## Importing program data
 
