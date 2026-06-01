@@ -18,26 +18,24 @@ pull the latest `main` to pick them up.
 
 ## Security model — what to know when you deploy
 
-- **The access gate is the boundary.** `proxy.ts` enforces HTTP Basic Auth at
-  the edge before any page, bundle, or data is served. It **fails closed**: with
-  no `APP_ACCESS_PASSWORD` set, every request returns HTTP 503. A client-side
-  check would *not* be enough — the gate must run server-side, which is why this
-  app can't be deployed as a static export. (The only way to disable the gate is
-  to explicitly set `APP_ALLOW_PUBLIC=true` — intended for public demo
-  deployments; never set it on one carrying real data.)
-- **Keep secrets out of the repo.** `APP_ACCESS_PASSWORD`, `ANTHROPIC_API_KEY`,
-  etc. belong in your host's environment (and `.env.local`, which is
-  git-ignored). Never commit them. The access password is shipped to nobody —
-  it's checked server-side only.
+- **The deployment is public.** The app ships with no built-in access control —
+  anyone with the URL can open it, including the bundled program data. If you
+  need to restrict access, add protection at the host level (e.g. Vercel
+  Deployment Protection, a reverse proxy with HTTP auth, or an SSO/WAF in
+  front). Don't deploy data you aren't comfortable serving publicly.
+- **Keep secrets out of the repo.** `ANTHROPIC_API_KEY` and similar secrets
+  belong in your host's environment (and `.env.local`, which is git-ignored).
+  Never commit them; they're used server-side only and shipped to nobody.
 - **Personal data stays on the device.** Contacts collected in **Meet** live in
   the browser's `localStorage`, never on a server.
 - **Only use data you have the right to use.** Loading a third party's content
-  or attendees' personal data can create copyright/privacy exposure regardless
-  of the access gate — see
+  or attendees' personal data can create copyright/privacy exposure, especially
+  on a public deployment — see
   [Your data, your responsibility](./README.md#your-data-your-responsibility).
 
 ## Hardening tips
 
-- Use a strong, unique `APP_ACCESS_PASSWORD`; rotate it after the event.
+- If access needs to be limited, put host-level protection in front (see above)
+  rather than relying on the app.
 - Keep the deployment `noindex` (it is by default) so it isn't crawled.
 - Prefer a host that terminates HTTPS (required for the camera and PWA anyway).

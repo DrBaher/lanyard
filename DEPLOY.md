@@ -14,22 +14,21 @@ README](./README.md#deploying). Two ways in.
 
    | Name | Value | Notes |
    |---|---|---|
-   | `APP_ACCESS_PASSWORD` | *(your secret)* | **Required.** The app's access gate. Server-only — never sent to the browser. The app returns HTTP 503 until this is set. |
-   | `APP_ACCESS_USER` | e.g. `guest` | Optional; defaults to `guest`. The username at the login prompt. |
    | `ANTHROPIC_API_KEY` | `sk-ant-…` | Optional. Enables live research; omit to stay in stub mode. **Server-only — never prefix with `NEXT_PUBLIC_`.** |
    | `RESEARCH_MODEL` | `claude-opus-4-8` | Optional override. |
-   | `NEXT_PUBLIC_GROUP_CODE` | *(a code)* | Optional. A light abuse guard for `/api/research`; the whole app is already behind the access gate. |
+   | `NEXT_PUBLIC_GROUP_CODE` | *(a code)* | Optional. A light abuse guard for `/api/research`. |
+
+   All of these are optional — you can deploy with none set.
 
 3. **Deploy.** You get an HTTPS URL — required for the camera, OCR, and
-   notifications to work on phones. Your browser will prompt for the
-   user/password from step 2.
+   notifications to work on phones.
 
 ## Option B — CLI
 
 ```bash
 npm i -g vercel
 vercel link          # connect this folder to a Vercel project
-vercel env add APP_ACCESS_PASSWORD        # repeat for each var above
+vercel env add ANTHROPIC_API_KEY          # optional; repeat for any var above
 vercel --prod        # build + deploy to production
 ```
 
@@ -37,7 +36,7 @@ vercel --prod        # build + deploy to production
 
 This is the one thing not verifiable in CI. On your phone:
 
-- Open the URL → log in at the browser prompt (the user/password you set).
+- Open the URL.
 - **Meet → Scan badge → Read text (OCR)** — grant camera permission, capture a
   badge, confirm the parsed name/company.
 - Tap **Research** on a speaker — if `ANTHROPIC_API_KEY` is set you get a live
@@ -48,8 +47,9 @@ This is the one thing not verifiable in CI. On your phone:
 
 ## Notes
 
-- **The gate fails closed:** with no `APP_ACCESS_PASSWORD`, every request
-  returns HTTP 503. If you see that after deploy, set the variable and redeploy.
+- **The deployment is public** — anyone with the URL can open it. To restrict
+  access, add protection at the host level (e.g. Vercel Deployment Protection or
+  a reverse proxy with HTTP auth in front).
 - **`/api/research` runs up to 60s** (`vercel.json` → `maxDuration`). On the
   Hobby plan the ceiling is 60s, on Pro 300s — fine either way. If a deploy
   warns about function duration, your plan caps it; lower the value to 10 to be

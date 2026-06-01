@@ -19,11 +19,9 @@ event-specific to the committed `data/*.json` — those stay as fictional sample
 
 ```bash
 npm install
-cp .env.example .env.local        # set APP_ACCESS_PASSWORD
+cp .env.example .env.local        # optional: keys for AI research, etc.
 npm run dev                       # http://localhost:3000
 ```
-
-The app is gated — you'll be prompted for `APP_ACCESS_USER` / `APP_ACCESS_PASSWORD`.
 
 ## Before opening a PR
 

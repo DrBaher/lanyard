@@ -1,7 +1,7 @@
 # Lanyard
 
-A private, installable **event companion** (PWA) for a conference or event.
-Point it at your own program data and deploy it behind a password in minutes.
+An installable **event companion** (PWA) for a conference or event.
+Point it at your own program data and deploy it in minutes.
 
 It's time-aware (a "happening now / up next" view), works offline, and stores
 everything personal — your starred sessions, the people you meet — locally on
@@ -14,9 +14,9 @@ tier.
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![PWA](https://img.shields.io/badge/PWA-installable-5a0fc8)
 
-**▶ [Live demo](https://lanyard-demo.vercel.app)** — sample data, no login required.
+**▶ [Live demo](https://lanyard-demo.vercel.app)** — sample data.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/DrBaher/lanyard&env=APP_ACCESS_USER,APP_ACCESS_PASSWORD&envDescription=Login%20for%20the%20access%20gate%20-%20the%20app%20stays%20locked%20until%20the%20password%20is%20set&envLink=https://github.com/DrBaher/lanyard%23deploying&project-name=lanyard&repository-name=lanyard)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/DrBaher/lanyard&envLink=https://github.com/DrBaher/lanyard%23deploying&project-name=lanyard&repository-name=lanyard)
 
 <table>
   <tr>
@@ -57,15 +57,15 @@ tier.
   a short, web-searched brief (needs an Anthropic API key; otherwise shows a
   stub).
 - **Light & dark** themes, installable to the home screen, offline-friendly.
-- **Private by default** — a server-side access gate (HTTP Basic Auth) keeps the
-  whole app, including its data, behind a password.
+- **On-device data** — your starred sessions and the people you meet stay in the
+  browser's `localStorage`, never on a server.
 
 ## Quick start
 
 ```bash
 npm install
-cp .env.example .env.local      # then set APP_ACCESS_PASSWORD
-npm run dev                     # http://localhost:3000 (you'll be prompted to log in)
+cp .env.example .env.local      # optional: keys for AI research, etc.
+npm run dev                     # http://localhost:3000
 ```
 
 The repo ships with **sample data** so it runs immediately. Then make it yours:
@@ -94,70 +94,49 @@ are defined in [`lib/types.ts`](./lib/types.ts):
 IDs are arbitrary strings but must line up (`speakerIds`/`orgIds` reference the
 `id`s in the other files).
 
-### 3. Set the access password
-
-The app is private and stays locked (HTTP 503) until you set a password:
-
-```
-APP_ACCESS_USER=guest
-APP_ACCESS_PASSWORD=your-secret
-```
-
-Set these in `.env.local` for local dev and in your host's environment for
-production. Share the user + password with whoever you want to let in.
-
-### 4. Deploy
+### 3. Deploy
 
 See **[Deploying](#deploying)** below.
 
 ## Deploying
 
 **This app needs a host that runs Next.js server-side** — it isn't a static
-site. The access gate (`proxy.ts`) runs as Next middleware, and the optional
-research endpoint is a server route. So **static-only hosts won't work**
-(GitHub Pages, plain S3/CDN, `next export`): the gate wouldn't run and the data
-would be served unprotected.
+site. The optional research endpoint is a server route, so **static-only hosts
+won't work** (GitHub Pages, plain S3/CDN, `next export`).
 
 You also want **HTTPS** in production — the camera (badge QR/OCR scanning) and
 PWA install/service worker only work over HTTPS (or `localhost` in dev).
 
 ### Recommended: Vercel
 
-Vercel is made by the Next.js team, runs the middleware/proxy and API routes
-with zero config, gives automatic HTTPS and a generous free tier, and makes env
-vars and custom domains easy. It's the path of least resistance here.
+Vercel is made by the Next.js team, runs the API routes with zero config, gives
+automatic HTTPS and a generous free tier, and makes env vars and custom domains
+easy. It's the path of least resistance here.
 
 1. Push this repo to GitHub/GitLab/Bitbucket.
 2. On [vercel.com](https://vercel.com) → **Add New → Project** → import the repo
    (framework auto-detects as Next.js).
-3. **Settings → Environment Variables**, add:
-   - `APP_ACCESS_USER` (e.g. `guest`)
-   - `APP_ACCESS_PASSWORD` (your secret) — **required**
-   - optionally `ANTHROPIC_API_KEY`, `RESEARCH_MODEL`, `NEXT_PUBLIC_GROUP_CODE`
-4. **Deploy.** Open the URL — your browser prompts for the user/password.
+3. **Settings → Environment Variables** (optional), add any of
+   `ANTHROPIC_API_KEY`, `RESEARCH_MODEL`, `NEXT_PUBLIC_GROUP_CODE` to enable AI
+   research.
+4. **Deploy.** Open the URL.
 5. (Optional) add a custom domain under **Settings → Domains**.
 
-> The gate **fails closed**: until `APP_ACCESS_PASSWORD` is set, every request
-> returns HTTP 503. If you see that after deploy, you haven't set it (or need to
-> redeploy after adding it).
-
-For a **public demo** (no login), set `APP_ALLOW_PUBLIC=true` instead of a
-password — that explicitly disables the gate for that deployment only.
+> **The deployment is public** — anyone with the URL can open it. If you want to
+> restrict access, add protection at the host level (e.g. Vercel's
+> [Deployment Protection](https://vercel.com/docs/security/deployment-protection),
+> a reverse proxy with HTTP auth, or an SSO/WAF in front).
 
 For a CLI alternative and an on-phone test checklist, see **[DEPLOY.md](./DEPLOY.md)**.
 
 ### Other hosts that work
 
-Anything that runs a Next.js Node/edge server, since middleware must run:
+Anything that runs a Next.js Node/edge server:
 
 - **Netlify** (with the Next.js runtime), **Render**, **Railway**, **Fly.io**,
   **Cloudflare** (Next-on-Pages) — import the repo, set the same env vars.
 - **Self-host / Docker / a VPS:** `npm run build && npm run start`, then put it
-  behind a reverse proxy (Caddy/Nginx) that terminates HTTPS. `next start` runs
-  the proxy gate just like Vercel does.
-
-Whatever you choose, set the env vars there and confirm the login prompt appears
-before sharing the URL.
+  behind a reverse proxy (Caddy/Nginx) that terminates HTTPS.
 
 ### Private data, public code (optional)
 
@@ -274,9 +253,9 @@ flow, and please follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ## Security
 
-The app's privacy depends on the access gate and your secrets. Please report
+Keep your secrets (e.g. `ANTHROPIC_API_KEY`) out of the repo. Please report
 vulnerabilities privately — see [SECURITY.md](./SECURITY.md). Never commit
-`.env.local`, and keep `APP_ACCESS_PASSWORD` out of the repo.
+`.env.local`.
 
 ## License
 

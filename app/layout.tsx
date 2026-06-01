@@ -19,8 +19,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   icons: { icon: "/icon.svg", apple: "/icon.svg" },
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: EVENT.name },
-  // Private tool — keep it out of search indexes (the Basic Auth gate already
-  // blocks crawlers, but this is belt-and-suspenders).
+  // Keep the deployment out of search indexes by default.
   robots: { index: false, follow: false },
 };
 
