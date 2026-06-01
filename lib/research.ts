@@ -15,8 +15,31 @@ export interface ResearchResult {
 
 // Cache real results on-device so re-tapping a subject is instant, costs
 // nothing, and still works offline. Keyed by subject; kept for the event week.
-const CACHE_PREFIX = "te.research.";
+//
+// Bump CACHE_VERSION to invalidate every device's cached dossiers at once (e.g.
+// after a change to how dossiers are generated). Older-version entries are
+// ignored and swept from localStorage on next use.
+const CACHE_ROOT = "te.research.";
+const CACHE_VERSION = "v2";
+const CACHE_PREFIX = `${CACHE_ROOT}${CACHE_VERSION}.`;
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+// One-time-per-load purge of entries written by an older cache version.
+let swept = false;
+function sweepOldVersions() {
+  if (swept || typeof window === "undefined") return;
+  swept = true;
+  try {
+    const drop: string[] = [];
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const k = window.localStorage.key(i);
+      if (k && k.startsWith(CACHE_ROOT) && !k.startsWith(CACHE_PREFIX)) drop.push(k);
+    }
+    drop.forEach((k) => window.localStorage.removeItem(k));
+  } catch {
+    /* best-effort — a stale entry left behind is harmless */
+  }
+}
 
 function cacheKey(kind: ResearchKind, name: string, context?: string): string {
   return `${CACHE_PREFIX}${kind}|${name}|${context ?? ""}`.toLowerCase();
@@ -58,6 +81,7 @@ export async function research(
   kind: ResearchKind,
   subject: { name: string; context?: string }
 ): Promise<ResearchResult> {
+  sweepOldVersions();
   const key = cacheKey(kind, subject.name, subject.context);
   const cached = readCache(key);
   if (cached) return cached;
