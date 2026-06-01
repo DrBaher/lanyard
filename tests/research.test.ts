@@ -13,6 +13,7 @@ globalThis.window = { localStorage };
 globalThis.localStorage = localStorage;
 
 const { research } = await import("../lib/research");
+const { stripLeadingMeta } = await import("../app/api/research/route");
 
 function mockFetch(payload: unknown, ok = true) {
   const fn = vi.fn(async () => ({ ok, json: async () => payload }));
@@ -53,5 +54,49 @@ describe("research caching", () => {
     const offline = await research("contact", { name: "Jane" });
     expect(offline.cached).toBe(true);
     expect(offline.summary).toBe("saved");
+  });
+});
+
+describe("stripLeadingMeta", () => {
+  it("drops a leading 'I have enough…' process sentence", () => {
+    const input =
+      "I have enough verified information to compile the dossier. Jakob Uszkoreit is the CEO and co-founder of Inceptive.";
+    expect(stripLeadingMeta(input)).toBe(
+      "Jakob Uszkoreit is the CEO and co-founder of Inceptive."
+    );
+  });
+
+  it("drops other meta openers (Based on…, Here's…, Let me…)", () => {
+    expect(stripLeadingMeta("Based on my research, here is the brief. Acme builds chips.")).toBe(
+      "Acme builds chips."
+    );
+    expect(stripLeadingMeta("Here's the dossier. She leads engineering at Foo.")).toBe(
+      "She leads engineering at Foo."
+    );
+    expect(stripLeadingMeta("Let me summarize. He founded Bar in 2019.")).toBe(
+      "He founded Bar in 2019."
+    );
+  });
+
+  it("leaves a normal dossier untouched", () => {
+    const ok = "Jakob Uszkoreit is the CEO of Inceptive. He co-authored a key AI paper.";
+    expect(stripLeadingMeta(ok)).toBe(ok);
+    // starts with 'I' but is a real word, not a meta opener
+    const inceptive = "Inceptive applies generative AI to RNA biology.";
+    expect(stripLeadingMeta(inceptive)).toBe(inceptive);
+  });
+
+  it("preserves a legitimate 'I couldn't find…' message", () => {
+    const noInfo = "I couldn't find reliable information about this person.";
+    expect(stripLeadingMeta(noInfo)).toBe(noInfo);
+  });
+
+  it("strips at most two meta sentences and never empties the text", () => {
+    expect(stripLeadingMeta("I have the results. Here's the brief. Real content here.")).toBe(
+      "Real content here."
+    );
+    // meta-only: nothing left to keep → returned as-is
+    const metaOnly = "I have enough information to proceed.";
+    expect(stripLeadingMeta(metaOnly)).toBe(metaOnly);
   });
 });

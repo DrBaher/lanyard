@@ -55,6 +55,10 @@ funding, launches, or news; and one or two specific, non-obvious talking points.
 
 Rules:
 - Be concise and skimmable. No preamble, no flattery, no filler.
+- Output ONLY the dossier. Never narrate your process or your confidence, and \
+never open with a meta sentence such as "I have enough information…", "Based on \
+my research…", "After searching…", "Let me…", or "Here is the brief…". Start \
+the very first sentence with the subject themselves (e.g. their name).
 - State only what you can support from search results. If you are unsure a \
 result refers to the same person/company, say so rather than guessing — \
 name collisions are common.
@@ -62,7 +66,7 @@ name collisions are common.
 - Never invent contact details, quotes, or statistics.
 
 Output format (plain text, exactly this shape):
-- First, a 1-2 sentence summary paragraph.
+- First, a 1-2 sentence summary paragraph that opens with the subject.
 - Then a blank line.
 - Then 3-5 bullet points, each starting with "- ".
 Do not use markdown headings, bold, or any other formatting.`;
@@ -81,6 +85,29 @@ function buildPrompt(body: Body): string {
     );
   }
   return lines.join("\n");
+}
+
+// Despite the system prompt, the web_search model occasionally opens with a
+// process/meta sentence ("I have enough verified information to compile the
+// dossier.", "Based on my research, …", "Here is the brief …"). The dossier is
+// supposed to start with the subject, so a leading first-person/meta sentence
+// is noise — strip up to two of them defensively before parsing.
+// Precise about first person: only process/confidence openers ("I have enough…",
+// "I'll compile…"), never a legitimate "I couldn't find reliable info…" message.
+const META_OPENER =
+  /^(?:i(?:['’]ll\b|['’]ve\b| have\b| now\b| will\b| can now\b| was able to\b)|here['’]?s\b|here is\b|based on (?:my|the)\b|after (?:reviewing|searching|conducting|gathering)\b|let me\b|drawing on\b|having (?:reviewed|searched|gathered)\b|to (?:summari[sz]e|compile)\b)/i;
+
+export function stripLeadingMeta(text: string): string {
+  let out = text.trim();
+  for (let i = 0; i < 2; i++) {
+    if (!META_OPENER.test(out)) break;
+    const m = out.match(/^.*?[.!?](?:\s+|$)/s); // first sentence
+    if (!m) break;
+    const rest = out.slice(m[0].length).trim();
+    if (!rest) break; // never strip away everything
+    out = rest;
+  }
+  return out;
 }
 
 /** Parse the model's plain-text output into a summary + bullets. */
@@ -199,7 +226,7 @@ export async function POST(req: Request) {
       });
     }
 
-    const { summary, bullets } = parseOutput(text);
+    const { summary, bullets } = parseOutput(stripLeadingMeta(text));
     return NextResponse.json({ stub: false, summary, bullets });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Research failed";
