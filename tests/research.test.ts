@@ -13,7 +13,7 @@ globalThis.window = { localStorage };
 globalThis.localStorage = localStorage;
 
 const { research } = await import("../lib/research");
-const { stripLeadingMeta } = await import("../app/api/research/route");
+const { stripLeadingMeta } = await import("../lib/strip-meta.mjs");
 const cache = await import("../lib/research-cache");
 
 function mockFetch(payload: unknown, ok = true) {

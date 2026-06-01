@@ -14,7 +14,8 @@
     "e2e": "playwright test",
     "import:ics": "node scripts/import/ics.mjs",
     "import:frab": "node scripts/import/frab.mjs",
-    "import:any": "node scripts/import/generic.mjs"
+    "import:any": "node scripts/import/generic.mjs",
+    "clean:research": "node scripts/clean-research.mjs"
   },
   "engines": {
     "node": ">=20.9.0"

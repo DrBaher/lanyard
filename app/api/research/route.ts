@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { getCached, setCached } from "@/lib/research-cache";
+import { stripLeadingMeta } from "@/lib/strip-meta.mjs";
 
 // --- LLM research endpoint (server-side) ---
 //
@@ -86,29 +87,6 @@ function buildPrompt(body: Body): string {
     );
   }
   return lines.join("\n");
-}
-
-// Despite the system prompt, the web_search model occasionally opens with a
-// process/meta sentence ("I have enough verified information to compile the
-// dossier.", "Based on my research, …", "Here is the brief …"). The dossier is
-// supposed to start with the subject, so a leading first-person/meta sentence
-// is noise — strip up to two of them defensively before parsing.
-// Precise about first person: only process/confidence openers ("I have enough…",
-// "I'll compile…"), never a legitimate "I couldn't find reliable info…" message.
-const META_OPENER =
-  /^(?:i(?:['’]ll\b|['’]ve\b| have\b| now\b| will\b| can now\b| was able to\b)|here['’]?s\b|here is\b|based on (?:my|the)\b|after (?:reviewing|searching|conducting|gathering)\b|let me\b|drawing on\b|having (?:reviewed|searched|gathered)\b|to (?:summari[sz]e|compile)\b)/i;
-
-export function stripLeadingMeta(text: string): string {
-  let out = text.trim();
-  for (let i = 0; i < 2; i++) {
-    if (!META_OPENER.test(out)) break;
-    const m = out.match(/^.*?[.!?](?:\s+|$)/s); // first sentence
-    if (!m) break;
-    const rest = out.slice(m[0].length).trim();
-    if (!rest) break; // never strip away everything
-    out = rest;
-  }
-  return out;
 }
 
 /** Parse the model's plain-text output into a summary + bullets. */
