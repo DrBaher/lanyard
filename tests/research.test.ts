@@ -14,6 +14,7 @@ globalThis.localStorage = localStorage;
 
 const { research } = await import("../lib/research");
 const { stripLeadingMeta } = await import("../app/api/research/route");
+const cache = await import("../lib/research-cache");
 
 function mockFetch(payload: unknown, ok = true) {
   const fn = vi.fn(async () => ({ ok, json: async () => payload }));
@@ -98,5 +99,29 @@ describe("stripLeadingMeta", () => {
     // meta-only: nothing left to keep → returned as-is
     const metaOnly = "I have enough information to proceed.";
     expect(stripLeadingMeta(metaOnly)).toBe(metaOnly);
+  });
+});
+
+describe("research-cache", () => {
+  it("builds a versioned, lowercased, kind-scoped key", () => {
+    expect(cache.keyFor("speaker", "Jakob Uszkoreit")).toBe(
+      "research:v1:speaker|jakob uszkoreit|"
+    );
+    expect(cache.keyFor("organization", "Inceptive", "RNA")).toBe(
+      "research:v1:organization|inceptive|rna"
+    );
+  });
+
+  it("no-ops without KV env: not configured, get returns null, no network call", async () => {
+    const noFetch = vi.fn(() => {
+      throw new Error("network must not be touched when KV is unconfigured");
+    });
+    globalThis.fetch = noFetch as unknown as typeof fetch;
+    expect(cache.cacheConfigured()).toBe(false);
+    await expect(cache.getCached("speaker", "Jakob Uszkoreit")).resolves.toBeNull();
+    await expect(
+      cache.setCached("speaker", "Jakob", undefined, { summary: "x", bullets: [] })
+    ).resolves.toBeUndefined();
+    expect(noFetch).not.toHaveBeenCalled();
   });
 });

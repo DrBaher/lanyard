@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
+import { getCached, setCached } from "@/lib/research-cache";
 
 // --- LLM research endpoint (server-side) ---
 //
@@ -184,6 +185,15 @@ export async function POST(req: Request) {
 
   const { kind, name, context } = body;
   if (!name) return NextResponse.json({ error: "Missing name" }, { status: 400 });
+
+  // Shared cache for public subjects only. Contacts ("a person I just met")
+  // are private and never cached server-side — they stay on the device.
+  const shareable = kind !== "contact";
+  if (shareable) {
+    const hit = await getCached(kind, name, context);
+    if (hit) return NextResponse.json({ stub: false, ...hit });
+  }
+
   if (!process.env.ANTHROPIC_API_KEY) return stub(kind, name, context);
 
   const client = new Anthropic();
@@ -227,6 +237,10 @@ export async function POST(req: Request) {
     }
 
     const { summary, bullets } = parseOutput(stripLeadingMeta(text));
+    // Write-through so the next attendee researching the same speaker/company
+    // gets this instantly and for free. Best-effort; never blocks the response
+    // meaningfully (the KV client times out fast and swallows errors).
+    if (shareable && summary) await setCached(kind, name, context, { summary, bullets });
     return NextResponse.json({ stub: false, summary, bullets });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Research failed";

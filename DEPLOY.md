@@ -17,6 +17,7 @@ README](./README.md#deploying). Two ways in.
    | `ANTHROPIC_API_KEY` | `sk-ant-…` | Optional. Enables live research; omit to stay in stub mode. **Server-only — never prefix with `NEXT_PUBLIC_`.** |
    | `RESEARCH_MODEL` | `claude-opus-4-8` | Optional override. |
    | `NEXT_PUBLIC_GROUP_CODE` | *(a code)* | Optional. A light abuse guard for `/api/research`. |
+   | `KV_REST_API_URL` / `KV_REST_API_TOKEN` | *(from Upstash/Vercel KV)* | Optional. Shared cache for speaker/company dossiers — first lookup pays, everyone else is instant. Contacts are never cached. |
 
    All of these are optional — you can deploy with none set.
 
