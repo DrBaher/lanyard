@@ -70,6 +70,27 @@ npm run dev                     # http://localhost:3000
 
 The repo ships with **sample data** so it runs immediately. Then make it yours:
 
+### Where your data lives
+
+Three separate places, by design:
+
+- **Program data** — sessions, speakers, companies, and pre-generated research
+  dossiers — lives in the four **`data/*.json`** files. The app imports them
+  directly (`lib/data.ts`), so they're **baked into the build**: it's static
+  content, not a runtime database. By default these files are **committed to
+  your own repo**. To keep real data private while open-sourcing the code, point
+  a separate data repo at the build instead — see [Private data, public
+  code](#private-data-public-code-optional).
+- **Each attendee's personal data** — the people they meet, starred sessions,
+  reminders — stays in their **browser's `localStorage`**, on the device and
+  never on a server.
+- **Secrets** — `ANTHROPIC_API_KEY`, the optional research-cache (KV)
+  credentials — live only in your host's environment variables, never in the
+  repo.
+
+So adapting the app to your event is mostly: edit `data/*.json` and
+`event.config.ts`, run `npm run validate`, commit, deploy.
+
 ### 1. Configure your event
 
 Edit [`event.config.ts`](./event.config.ts) — name, short name, tagline, city,
