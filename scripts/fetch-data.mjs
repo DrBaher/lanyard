@@ -85,7 +85,7 @@ try {
     stdio: ["ignore", "ignore", "inherit"],
     env,
   });
-  const files = ["sessions.json", "speakers.json", "organizations.json", "research.json"];
+  const files = ["sessions.json", "speakers.json", "organizations.json", "research.json", "event.json"];
   let copied = 0;
   for (const f of files) {
     const src = [path.join(clone, "data", f), path.join(clone, f)].find(existsSync);

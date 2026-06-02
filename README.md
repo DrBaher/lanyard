@@ -93,9 +93,15 @@ So adapting the app to your event is mostly: edit `data/*.json` and
 
 ### 1. Configure your event
 
-Edit [`event.config.ts`](./event.config.ts) — name, short name, tagline, city,
-timezone, the list of days, and your website. The timezone must match the UTC
-offsets in your session data.
+Set name, short name, tagline, city, timezone, the list of days, and your
+website. The timezone must match the UTC offsets in your session data.
+
+Two ways: edit the defaults in [`event.config.ts`](./event.config.ts), **or**
+— to keep this repo a neutral template — leave them and put the same keys in
+[`data/event.json`](./data/event.json) (empty `{}` by default). Anything in
+`data/event.json` overrides the defaults, so your branding can ride along with
+your program data (including a private data repo; see
+[Private data, public code](#private-data-public-code-optional)).
 
 ### 2. Add your program data
 

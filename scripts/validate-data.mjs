@@ -46,12 +46,19 @@ export async function validate({ root = DEFAULT_ROOT, checkLinks = false } = {})
   const sessions = asArray(load("sessions.json"), "sessions.json");
   const research = load("research.json");
 
-  // Event days, parsed from event.config.ts (regex — avoids importing TS here).
+  // Effective event days: the data/event.json overlay wins (that's what the app
+  // uses at build time), falling back to the event.config.ts defaults.
   let days = [];
   try {
-    const m = fs.readFileSync(path.join(root, "event.config.ts"), "utf8").match(/days:\s*\[([^\]]*)\]/);
-    if (m) days = [...m[1].matchAll(/(\d{4}-\d{2}-\d{2})/g)].map((x) => x[1]);
-  } catch { /* event.config optional for validation */ }
+    const evt = JSON.parse(fs.readFileSync(path.join(root, "data", "event.json"), "utf8"));
+    if (Array.isArray(evt.days)) days = evt.days;
+  } catch { /* event.json is optional */ }
+  if (!days.length) {
+    try {
+      const m = fs.readFileSync(path.join(root, "event.config.ts"), "utf8").match(/days:\s*\[([^\]]*)\]/);
+      if (m) days = [...m[1].matchAll(/(\d{4}-\d{2}-\d{2})/g)].map((x) => x[1]);
+    } catch { /* event.config optional for validation */ }
+  }
 
   // Required fields + unique ids.
   const idSet = (list, name, required) => {
