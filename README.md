@@ -94,7 +94,28 @@ are defined in [`lib/types.ts`](./lib/types.ts):
 IDs are arbitrary strings but must line up (`speakerIds`/`orgIds` reference the
 `id`s in the other files).
 
-### 3. Deploy
+### 3. Validate your data
+
+```bash
+npm run validate          # add --check-links to also test photo URLs resolve
+```
+
+The app imports `data/*.json` directly, so a lossy import or a typo can ship
+silently. `npm run validate` is the gate — it **also runs as part of
+`npm run build`**, so a dataset with a hard error can't deploy. It checks:
+
+- **Hard errors** (fail the build): malformed JSON, missing required fields,
+  duplicate IDs, and **dangling references** — every `speakerId`/`orgId` must
+  resolve, and every session needs `start` < `end`.
+- **Warnings** (printed, non-fatal): a content session (not a break/mixer) with
+  **no speakers**, an orphan speaker no session references, a non-`https` or
+  placeholder photo, a session dated outside your `event.config.ts` days, or a
+  pre-generated dossier that still opens with model preamble.
+
+Run it whenever you regenerate or hand-edit the data; treat the warnings as a
+to-do list (they're exactly the gaps that make a program feel half-finished).
+
+### 4. Deploy
 
 See **[Deploying](#deploying)** below.
 

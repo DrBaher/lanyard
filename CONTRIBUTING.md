@@ -30,6 +30,7 @@ Please make sure these pass:
 ```bash
 npm run typecheck   # tsc --noEmit
 npm test            # vitest
+npm run validate    # data/*.json integrity (also runs inside build)
 npm run build       # production build
 ```
 

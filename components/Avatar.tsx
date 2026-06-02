@@ -1,3 +1,6 @@
+"use client";
+import { useState } from "react";
+
 // Pleasant, dark-bg-friendly palette; pick deterministically from the name so
 // each person/company keeps a stable, distinct colour.
 const AVATAR_COLORS = [
@@ -16,7 +19,8 @@ export function Avatar({ src, name, size = 48 }: { src?: string; name: string; s
     .slice(0, 2)
     .map((w) => w[0]?.toUpperCase() ?? "")
     .join("");
-  if (src) {
+  const [failed, setFailed] = useState(false);
+  if (src && !failed) {
     // eslint-disable-next-line @next/next/no-img-element
     return (
       <img
@@ -26,6 +30,9 @@ export function Avatar({ src, name, size = 48 }: { src?: string; name: string; s
         height={size}
         className="rounded-full object-cover"
         style={{ width: size, height: size }}
+        // A dead/blocked photo URL degrades to the initials avatar instead of a
+        // broken-image icon.
+        onError={() => setFailed(true)}
       />
     );
   }
